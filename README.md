@@ -111,7 +111,3 @@ archiver will also ask a couple of questions to after the process has finished.
 Asking the user if they would like to dump a copy of the files that were moved to a CSV file.
 
 If the user choose (Y/y) yes, then they will also be prompted for a directory to save the CSV file to, if no directory is given, the CSV file will be saved to the same directory as the program was called from.
-
-___
-
-Created by Blake@<129040985+MrDwarf7@users.noreply.github.com> 2024/01/17
