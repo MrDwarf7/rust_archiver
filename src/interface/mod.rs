@@ -1,3 +1,3 @@
-pub mod interface_parser;
+pub mod interface_builder;
 
-pub use interface_parser::InterfaceParser;
+pub use interface_builder::InterfaceParser;
