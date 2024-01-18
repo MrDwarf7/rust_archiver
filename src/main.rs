@@ -18,7 +18,7 @@ async fn main() {
 
     interface_parser.setup_runtime().await;
 
-    todo!("Finalize implmentatiing CLAP as the interface parser");
+    todo!("Finalize implmentatiing CLAP as the interface parser.");
     //
     //
     let args: Vec<String> = std::env::args().collect();
