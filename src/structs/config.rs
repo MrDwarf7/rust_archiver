@@ -70,7 +70,7 @@ impl Config {
         }
     }
 
-    fn parse_date(date_str: &str) -> Result<DateTime<Utc>, &'static str> {
+    pub fn parse_date(date_str: &str) -> Result<DateTime<Utc>, &'static str> {
         NaiveDate::parse_from_str(date_str, "%Y/%m/%d")
             .map_err(|_| "Invalid time. Date must be formatted as YYYY/MM/DD")
             .and_then(|date| date.and_hms_opt(0, 0, 0).ok_or("Invalid time"))

@@ -16,7 +16,9 @@ async fn main() {
 
     let interface_parser = InterfaceParser::new();
 
-    interface_parser.setup_runtime().await;
+    let valid_args = interface_parser.setup_runtime();
+
+    println!("Valid args: {:#?}", &valid_args);
 
     todo!("Finalize implmentatiing CLAP as the interface parser.");
     //
