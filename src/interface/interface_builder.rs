@@ -1,30 +1,26 @@
-use chrono::{DateTime, NaiveDate, TimeZone, Utc};
+use chrono::{DateTime, Utc};
 // use chrono::{DateTime, Utc};
-use clap::{parser::RawValues, Arg, ArgAction, ArgMatches, Command, ValueHint};
+use clap::{parser::RawValues, Arg, ArgAction, Command, ValueHint};
 use emojis;
 // use tokio::join;
-use std::{io, path::PathBuf};
+use std::{fmt::Debug, io, fmt, path:: PathBuf};
 
-
-
-
-#[derive(Debug)]
-enum ParseTypes {
-}
+use crate::processing::async_archiver::cli_helpers;
+// use std::fmt;
 
 
 #[derive(Debug)]
 pub struct ValidArgs {
-    src_path: PathBuf,
-    archive_name: String,
-    archive_all_before: DateTime<Utc>,
-    flags : Vec<String>
+    pub src_path: PathBuf,
+    pub archive_name: PathBuf,
+    pub archive_all_before: DateTime<Utc>,
+    pub flags : Vec<String>
 }
 
 impl ValidArgs {
     pub fn new(
         src_path: PathBuf,
-        archive_name: String,
+        archive_name: PathBuf,
         archive_all_before: DateTime<Utc>,
         flags: Vec<String>
     ) -> ValidArgs {
@@ -35,12 +31,14 @@ impl ValidArgs {
             flags
         }
     }
+    pub fn print(&self) {
+        println!("src_path: {:?}", self.src_path);
+        println!("archive_name: {:?}", self.archive_name);
+        println!("archive_all_before: {:?}", self.archive_all_before);
+        println!("flags: {:?}", self.flags);
+    }
         
 }
-
-
-
-
 
 pub struct InterfaceParser {
     pub args: Vec<String>,
@@ -66,7 +64,11 @@ impl InterfaceParser {
             .before_help("\n") // Placeholders for now
             .about(format!("\t{rocket} Blazin' fast archiving, with Rust {crab}\n \t   Now adapted for network drive usage!"))
             .arg_required_else_help(true)
+            
             // .after_long_help("After long help section when using --help")
+            // before's
+            // help is automatic
+            // .after_help("This is a test")
             
             // Custom, non required About arg
             .arg(
@@ -81,10 +83,6 @@ http://www.google.com --- Placeholder()
                 .long_help("About the program")
             )
             
-            
-            // before's
-            // help is automatic
-            // .after_help("This is a test")
             
             // First arg - source path
             .arg(
@@ -195,43 +193,108 @@ Output of reports are no longer requested at runtime and instead automatically w
             .get_matches();
         
         let src_path = matches.get_raw("src_path").unwrap();
-        println!("src_path: {:#?}", src_path);
-        
         let archive_name = matches.get_raw("archive_name").unwrap();
-        println!("archive_name: {:#?}", archive_name);
-        
         let archive_all_before = matches.get_raw("archive_all_before").unwrap();
-        println!("archive_all_before: {:#?}", archive_all_before);
-        
         let non_interactive_mode = matches.get_raw("non_interactive_mode").unwrap();
-        println!("non_interactive_mode: {:#?}", non_interactive_mode);
         
-       
-        let src_path = matches.get_one::<PathBuf>("src_path").expect("No source path provided");
-        let archive_name = matches.get_one::<String>("archive_name").expect("No archive name provided").clone();
-        let archive_all_before_str = matches.get_one::<String>("archive_all_before").expect("No date provided");
-        let archive_all_before = crate::Config::parse_date(&archive_all_before_str).expect("Invalid date provided");
+        // let printable_args = Vec::from([
+        //     &src_path,
+        //     &archive_name,
+        //     &archive_all_before,
+        //     &non_interactive_mode
+        // ]);
         
-
-       
-        
-        
-        todo!();
-        let valid_args = ValidArgs::new(
-            *src_path,
+        let args_to_print = ArgsToPrint {
+            src_path,
             archive_name,
             archive_all_before,
-            non_interactive_mode,
-        );
+            non_interactive_mode
+        };
+        println!("Args to print: {:#?}", args_to_print);
         
+       
+        let src_path = &matches.get_one::<PathBuf>("src_path").expect("No source path provided").to_path_buf();
+        let archive_name = matches.get_one::<PathBuf>("archive_name").expect("No archive name provided").clone();
+        let archive_all_before_str = matches.get_one::<String>("archive_all_before").expect("No date provided");
+        let archive_all_before = cli_helpers::parse_date(&archive_all_before_str).expect("Invalid date provided");
+        
+        self.printable_args();
+
+        
+        
+        let valid_args_closure = || {
+            let flags: Vec<String> = non_interactive_mode.into_iter()
+            .map(|flag| flag.to_str().unwrap().to_owned()).collect();
+            // for flag in non_interactive_mode {
+            //     flags.push(flag);
+            // }
+            let valid_args = ValidArgs::new(
+                src_path.clone(),
+                archive_name.clone(),
+                archive_all_before,
+                Vec::from(flags)
+            );
+            
+            valid_args
+        };
+        
+        let valid_args = valid_args_closure();
         return valid_args;
     }
     
-    fn parse_date(date_str: &str) -> Result<DateTime<Utc>, &'static str> {
-        NaiveDate::parse_from_str(date_str, "%Y/%m/%d")
-            .map_err(|_| "Invalid time. Date must be formatted as YYYY/MM/DD")
-            .and_then(|date| date.and_hms_opt(0, 0, 0).ok_or("Invalid time"))
-            .map(|naive_date| Utc.from_utc_datetime(&naive_date))
+    
+    fn printable_args(&self) -> Vec<&String> {
+        let src_path = self.args.get(1).unwrap();
+        let archive_name = self.args.get(2).unwrap();
+        let archive_all_before = self.args.get(3).unwrap();
+        let non_interactive_mode = self.args.get(4).unwrap();
+        
+        let printable_args = Vec::from([
+            src_path,
+            archive_name,
+            archive_all_before,
+            non_interactive_mode
+        ]);
+        
+        return printable_args
     }
+}
+
+
+pub struct EndProcessValidation {
     
 }
+
+
+
+
+
+
+
+ 
+#[derive(Debug)]
+pub struct ArgsToPrint<'a> {
+    src_path: RawValues<'a>,
+    archive_name: RawValues<'a>,
+    archive_all_before: RawValues<'a>,
+    non_interactive_mode: RawValues<'a>,
+}
+
+impl<'a> fmt::Display for ArgsToPrint<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "src_path: {:#?}\narchive_name: {:#?}\narchive_all_before: {:#?}\nnon_interactive_mode: {:#?}",
+            self.src_path, self.archive_name, self.archive_all_before, self.non_interactive_mode)
+    }
+} 
+   
+   
+    
+    
+    
+    // fn parse_date(date_str: &str) -> Result<DateTime<Utc>, &'static str> {
+    //     NaiveDate::parse_from_str(date_str, "%Y/%m/%d")
+    //         .map_err(|_| "Invalid time. Date must be formatted as YYYY/MM/DD")
+    //         .and_then(|date| date.and_hms_opt(0, 0, 0).ok_or("Invalid time"))
+    //         .map(|naive_date| Utc.from_utc_datetime(&naive_date))
+    // }
+    
