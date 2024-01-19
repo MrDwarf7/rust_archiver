@@ -1,6 +1,5 @@
 // pub mod archiver;
 // pub mod new_archiver;
-pub mod new_archiver;
-pub use new_archiver::{arch_config::ArchiveConfig, archive_processor::ArchiverProcessorAsync};
-
-pub use new_archiver::cli_helpers::CliQuestions;
+pub mod async_archiver;
+pub use async_archiver::archive_processor::ArchiverProcessorAsync;
+pub use async_archiver::cli_helpers::CliQuestions;

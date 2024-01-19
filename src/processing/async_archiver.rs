@@ -1,12 +1,12 @@
-pub mod arch_config {
-    use chrono::{DateTime, Utc};
-    use std::path::PathBuf;
-    pub struct ArchiveConfig {
-        pub folder_with_files: PathBuf,
-        pub archive_into_folder: PathBuf,
-        pub files_before_date: DateTime<Utc>,
-    }
-}
+// pub mod arch_config {
+//     use chrono::{DateTime, Utc};
+//     use std::path::PathBuf;
+//     pub struct ArchiveConfig {
+//         pub folder_with_files: PathBuf,
+//         pub archive_into_folder: PathBuf,
+//         pub files_before_date: DateTime<Utc>,
+//     }
+// }
 
 /*
 
@@ -22,7 +22,10 @@ pub mod arch_config {
 */
 
 pub mod archive_processor {
-    use super::arch_config::ArchiveConfig;
+    use crate::interface::interface_builder::ValidArgs;
+    // use crate::structs::config::Config;
+
+    // use super::arch_config::ArchiveConfig;
     use chrono::{DateTime, Utc};
     use rayon::prelude::*;
     use std::fs::File;
@@ -41,11 +44,11 @@ pub mod archive_processor {
 
     // Overview call functions
     impl ArchiverProcessorAsync {
-        pub fn new(config: ArchiveConfig, cutoff_date: DateTime<Utc>) -> ArchiverProcessorAsync {
+        pub fn new(config: ValidArgs) -> ArchiverProcessorAsync {
             ArchiverProcessorAsync {
-                folder_with_files: config.folder_with_files,
-                archive_into_folder: config.archive_into_folder,
-                files_before_date: cutoff_date,
+                folder_with_files: config.src_path,
+                archive_into_folder: config.archive_name,
+                files_before_date: config.archive_all_before,
             }
         }
 
@@ -189,7 +192,7 @@ pub mod cli_helpers {
     use chrono::{DateTime, Utc};
     use std::path::PathBuf;
 
-    fn parse_date(src: &str) -> Result<DateTime<Utc>, chrono::ParseError> {
+    pub fn parse_date(src: &str) -> Result<DateTime<Utc>, chrono::ParseError> {
         let naive = chrono::NaiveDateTime::parse_from_str(src, "%Y-%m-%d %H:%M:%S")?;
         let datetime: DateTime<Utc> = DateTime::from_naive_utc_and_offset(naive, Utc);
         Ok(datetime)
@@ -214,10 +217,9 @@ pub mod cli_helpers {
             std::io::stdin().read_line(&mut input).unwrap();
         }
 
-        pub fn ask_questions(&self) {
-            Self::ask_questions(&self);
-            todo!();
-        }
+        // pub fn ask_questions(&self) {
+        //     Self::ask_questions(&self);
+        // }
 
         fn qustion_dump_to_csv(&mut self) {
             println!("Would you like to dump the list of files to a CSV document? (y/n)");
