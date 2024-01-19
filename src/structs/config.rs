@@ -5,6 +5,8 @@ use std::{
 
 use chrono::{DateTime, NaiveDate, TimeZone, Utc};
 
+use crate::interface::interface_builder::ValidArgs;
+
 #[derive(Debug)]
 // #[allow(dead_code)]
 pub struct Config {
@@ -14,12 +16,12 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: Vec<String>) -> Result<Config, &'static str> {
-        if args.len() < 2 {
-            return Err("Not enough arguments");
-        }
+    pub fn new(args: ValidArgs) -> Result<Config, &'static str> {
+        // if args.len() < 2 {
+        //     return Err("Not enough arguments");
+        // }
 
-        let folder_with_files = PathBuf::from(&args[1]);
+        // let folder_with_files = PathBuf::from(&args[1]);
         let archive_into_folder = Self::determine_archive_folder(&folder_with_files, &args); // Fix: Pass &self as the first argument
         let files_before_date = Self::determine_cutoff_date(&args)?;
 
