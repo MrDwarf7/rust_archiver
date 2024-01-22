@@ -208,7 +208,7 @@ Output of reports are no longer requested at runtime and instead automatically w
             src_path,
             archive_name,
             archive_all_before,
-            non_interactive_mode
+            non_interactive_mode: non_interactive_mode.clone(),
         };
         println!("Args to print: {:#?}", args_to_print);
         
@@ -217,14 +217,12 @@ Output of reports are no longer requested at runtime and instead automatically w
         let archive_name = matches.get_one::<PathBuf>("archive_name").expect("No archive name provided").clone();
         let archive_all_before_str = matches.get_one::<String>("archive_all_before").expect("No date provided");
         let archive_all_before = cli_helpers::parse_date(&archive_all_before_str).expect("Invalid date provided");
-        
+
         self.printable_args();
 
-        
-        
         let valid_args_closure = || {
             let flags: Vec<String> = non_interactive_mode.into_iter()
-            .map(|flag| flag.to_str().unwrap().to_owned()).collect();
+            .map(|flag| flag.to_str().unwrap().to_owned()).collect::<Vec<String>>();
             // for flag in non_interactive_mode {
             //     flags.push(flag);
             // }
@@ -237,9 +235,10 @@ Output of reports are no longer requested at runtime and instead automatically w
             
             valid_args
         };
-        
-        let valid_args = valid_args_closure();
-        return valid_args;
+
+        // let valid_args: ValidArgs = valid_args_closure();
+
+        valid_args_closure()
     }
     
     

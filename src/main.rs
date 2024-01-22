@@ -5,6 +5,7 @@ mod utils;
 use interface::InterfaceParser;
 use processing::ArchiverProcessorAsync;
 use std::time::Instant;
+use tokio::main;
 
 // use structs::config::Config;
 
@@ -12,7 +13,7 @@ use std::time::Instant;
 // ie: via python or something, and shifts args by 1 (Can hold args in a struct and utilize a method handler for this )
 //
 
-#[tokio::main]
+#[main]
 async fn main() {
     let start = Instant::now();
 
