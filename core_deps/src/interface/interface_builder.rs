@@ -1,12 +1,7 @@
 use chrono::{DateTime, Utc};
-// use chrono::{DateTime, Utc};
 use clap::{parser::RawValues, Arg, ArgAction, Command, ValueHint};
 use emojis;
-// use tokio::join;
 use std::{fmt::Debug, io, fmt, path:: PathBuf};
-
-use crate::processing::async_archiver::cli_helpers;
-// use std::fmt;
 
 
 #[derive(Debug)]
@@ -37,7 +32,6 @@ impl ValidArgs {
         println!("archive_all_before: {:?}", self.archive_all_before);
         println!("flags: {:?}", self.flags);
     }
-        
 }
 
 pub struct InterfaceParser {
@@ -216,7 +210,7 @@ Output of reports are no longer requested at runtime and instead automatically w
         let src_path = &matches.get_one::<PathBuf>("src_path").expect("No source path provided").to_path_buf();
         let archive_name = matches.get_one::<PathBuf>("archive_name").expect("No archive name provided").clone();
         let archive_all_before_str = matches.get_one::<String>("archive_all_before").expect("No date provided");
-        let archive_all_before = cli_helpers::parse_date(&archive_all_before_str).expect("Invalid date provided");
+        let archive_all_before = crate::utils::parse_date(&archive_all_before_str).expect("Invalid date provided");
 
         self.printable_args();
 

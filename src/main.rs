@@ -1,17 +1,9 @@
-mod interface;
-mod processing;
-mod structs;
-mod utils;
-use interface::InterfaceParser;
-use processing::ArchiverProcessorAsync;
 use std::time::Instant;
 use tokio::main;
 
-// use structs::config::Config;
+// use core_deps::{interface::InterfaceParser, processing::ArchiverProcessorAsync};
 
-// Add args[0] that indicates it's being run as an automated process
-// ie: via python or something, and shifts args by 1 (Can hold args in a struct and utilize a method handler for this )
-//
+use core_deps::{interface::InterfaceParser, processing::ArchiverProcessorAsync};
 
 #[main]
 async fn main() {

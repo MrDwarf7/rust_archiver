@@ -1,3 +1,4 @@
+workspace = { members = ["core_deps"] }
 [package]
 name = "rust_archiver"
 version = "0.1.0"
@@ -7,10 +8,12 @@ authors = ["Blake@129040985+MrDwarf7@users.noreply.github.com."]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-chrono = "0.4.31"
-chrono-tz = "0.8.5"
-clap = { version = "4.4.18", features = ["derive", "cargo"] }
-emojis = "0.6.1"
-rayon = "1.8.0"
+# chrono = "0.4.31"
+# chrono-tz = "0.8.5"
+# clap = { version = "4.4.18", features = ["derive", "cargo"] }
+# emojis = "0.6.1"
+# rayon = "1.8.0"
 tokio = { version = "1.35.1", features = ["full"] }
-zip = "0.6.6"
+# zip = "0.6.6"
+
+core_deps = { path = "./core_deps" }
